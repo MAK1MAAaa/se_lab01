@@ -1,6 +1,12 @@
 # Lab1 Phase 1：架构与开发记录
 
-本工程实现 TypeScript 面向对象 SVG 命令行编辑器，范围为 rect、circle、ellipse、line、text、g 六种内置元素。box 和插件加载属于后续阶段。本文件记录方案及实际迭代，不把 AI 自查写成人类审阅。逐项验收证据见 [需求复核报告](requirement-checklist.md)。
+Git 仓库：[https://github.com/MAK1MAAaa/se_lab01](https://github.com/MAK1MAAaa/se_lab01)
+
+最终提交标签：[final](https://github.com/MAK1MAAaa/se_lab01/tree/final)
+
+本文件为可单独提交的作业 README.md，包含架构方案、过程记录、一致性自查和质量保证手段；源代码、测试、示例及分步提交历史均可在上述仓库中查看。
+
+本工程实现 TypeScript 面向对象 SVG 命令行编辑器，范围为 rect、circle、ellipse、line、text、g 六种内置元素。box 和插件加载属于后续阶段。本文件记录方案及实际迭代，不把 AI 自查写成人类审阅。逐项验收证据见仓库中的 [需求复核报告](https://github.com/MAK1MAAaa/se_lab01/blob/final/doc/requirement-checklist.md)。
 
 ## 架构方案
 

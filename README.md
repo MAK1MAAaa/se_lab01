@@ -1,5 +1,11 @@
 # SVG 编辑器 CLI · Lab1 Phase 1
 
+Git 仓库：[https://github.com/MAK1MAAaa/se_lab01](https://github.com/MAK1MAAaa/se_lab01)
+
+最终提交标签：[final](https://github.com/MAK1MAAaa/se_lab01/tree/final)
+
+作业提交文件：[doc/README.md](doc/README.md)，包含仓库地址、架构方案、过程记录、一致性自查与质量保证手段，可单独提交。
+
 TypeScript 面向对象实现，支持六种 SVG 元素、嵌套分组、文件读写、逐命令撤销和重做。架构与过程见 [doc/README.md](doc/README.md)，逐项验收证据见 [需求复核报告](doc/requirement-checklist.md)，原始任务见 [phase_cli_1.md](phase_cli_1.md)。
 
 ## 运行
