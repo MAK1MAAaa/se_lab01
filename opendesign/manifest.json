@@ -1,0 +1,25 @@
+{
+  "generated": "2026-10-20T10:40:02.915520+00:00",
+  "sections": [
+    {
+      "id": "mockups",
+      "label": "Mockups",
+      "groups": [
+        {
+          "slug": "cli-showcase",
+          "files": [
+            {
+              "label": "index.html",
+              "path": "mockups/cli-showcase/index.html"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "design-systems",
+      "label": "Design Systems",
+      "groups": []
+    }
+  ]
+}

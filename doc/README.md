@@ -1,6 +1,6 @@
 # Lab1 Phase 1：架构与开发记录
 
-本工程实现 TypeScript 面向对象 SVG 命令行编辑器，范围为 rect、circle、ellipse、line、text、g 六种内置元素。box 和插件加载属于后续阶段。本文件记录最终方案及实际迭代，不把 AI 自查写成人类审阅。
+本工程实现 TypeScript 面向对象 SVG 命令行编辑器，范围为 rect、circle、ellipse、line、text、g 六种内置元素。box 和插件加载属于后续阶段。本文件记录方案及实际迭代，不把 AI 自查写成人类审阅。逐项验收证据见 [需求复核报告](requirement-checklist.md)。
 
 ## 架构方案
 
@@ -15,6 +15,7 @@
 | `src/presentation/` | 分词、命令分发、交互及脚本运行；入口组装依赖 | CommandParser、CLI 入口等 |
 | `tests/` | 领域、应用、SVG 与 CLI 的行为验证 | Node 测试运行器与断言 |
 | `examples/` | 可回放命令与外部 SVG 输入 | flowchart.commands、other.svg |
+| `scripts/`、`opendesign/` | 附加演示的生成工具与静态回放页，不参与 CLI 运行时依赖 | DemoBuilder、真实状态快照与 OpenDesign 查看器 |
 
 ```plantuml
 @startuml
@@ -76,7 +77,8 @@ History 维护 undo/redo 两栈。成功的新编辑清空 redo；init、read、
 - set 只允许公共样式、各类型自身几何和 text 内容。导入的 transform、font-size、text-anchor 等可往返保留，但不会扩大修改白名单。g 上样式依照 SVG 继承生效，不批量改写子属性。
 - move 给子树局部位置加增量，scale 同乘位置与几何尺寸；text 只缩放 x/y，字体大小等样式不变。已有 transform 原样保留。group/addto/ungroup 重挂时保留局部属性，**不会重算世界坐标或补偿继承样式**，因此有 transform 或父级样式的节点重挂后可能改变外观。
 - 输入要求 SVG XML 命名空间，支持使用该命名空间的前缀。根 viewBox 和其他根属性保留；缺省尺寸取 viewBox 或 800×600。根尺寸支持无单位或 px，不支持百分比等单位。canvas 只改宽高，不重写已导入 viewBox。
-- XML 库处理文本与属性转义；畸形 XML、重复 id、DOCTYPE、错误命名空间、未知元素、叶子中的子元素等读入失败。注释和原排版不属于领域内容，保存不保证字节级相同；往返目标是受支持树结构和属性语义。
+- 无参数 save 使用最近成功 read 的路径。新文档的第一次成功 save 建立默认路径；后续 save copy.svg 只保存副本，不切换默认路径；成功 read 重新设定，init 清空。失败保存不会建立或改变默认路径。
+- XML 库处理文本与属性转义；保存时把 CR 以及属性中的换行、制表符编码为字符引用，避免 XML 再解析的换行归一化改变内容。畸形 XML、重复 id、DOCTYPE、错误命名空间、未知元素、叶子中的子元素等读入失败。注释和原排版不属于领域内容，保存不保证字节级相同；往返目标是受支持树结构和属性语义。
 - LocalSvgRepository 在同目录写唯一临时文件，完成后 rename 替换目标，失败清理临时文件，避免已有文件半写；未提供断电持久化保证。
 
 本实现是受限 SVG 编辑内核，不是完整的通用 SVG/CSS 编辑器。
@@ -99,6 +101,9 @@ History 维护 undo/redo 两栈。成功的新编辑清空 redo；init、read、
 | 根 id 防重 | 导入根 SVG 有 id 时，新建图形可能占用该 id | 将根 id 纳入新增和分组的唯一性校验 |
 | 历史与 IO | 显示、编辑与 IO 不能统一执行后入栈 | EditCommand 存快照、History 管双栈和屏障；失败操作保留历史 |
 | 入口核验 | 类级测试不能单独证明脚本、提示符与退出码正确 | 增加入口测试；回放流程图，并对编译产物验证脚本报错后继续、最终退出 1 |
+| 保存路径复核 | read original.svg → save copy.svg → save 原实现最后写副本，违反读入路径默认语义 | 保存副本不再替换默认路径；补两项应用回归，覆盖重新 read、init、首次成功保存与失败保存 |
+| 文本字符复核 | 合法文本中的 CR 字符引用保存后若成为原始 CR，再读入会被 XML 归一化为 LF | 序列化显式保留 CR 字符引用及属性空白；补一项 SVG 回归，覆盖 CR、CRLF 与重复往返 |
+| 展示改进 | 用户要求在不偏离任务书的前提下探索美化 | 使用一次性 OpenDesign 蓝橙演示页，保留原 CLI；九帧数据经现有 CommandRunner 和 History 真实生成，不增加图形类型或 set 属性 |
 
 ## 一致性自查
 
@@ -140,12 +145,17 @@ History 维护 undo/redo 两栈。成功的新编辑清空 redo；init、read、
 
 | 已执行检查 | 结果 |
 | --- | --- |
-| `npm run check` | 类型检查、31 项测试（20 项应用、4 项 CLI、7 项 SVG/文件测试）及生产构建全部通过 |
+| 原交付基准 `fa00319` 的 `npm run check` | 类型检查、31 项测试及生产构建通过；这是原基准结果 |
+| 本次复核后的 `npm run check` | 类型检查、34 项行为测试（22 项应用、4 项 CLI、8 项 SVG/文件测试）和生产构建全部通过 |
 | `npm run cli -- --script examples/flowchart.commands` | 退出 0，完成移动/撤销/重做和文本修改，生成 8 元素流程图 |
 | 示例 SVG 读回及再次编解码 | flowchart.svg 为 8 元素、文字为“处理数据 v2”；other.svg 为 7 元素，按约定补 rect1 并警告 |
 | 编译产物脚本错误检查 | 使用 `node dist/presentation/main.js --script ...`；未知 box 报错后仍创建后续图形，最终退出 1 |
 | 架构与类命名静态核对 | 42 个源文件、123 条内部导入，0 个依赖方向或类名/文件名违规 |
+| `npm run demo:build` 与新版 CLI 脚本回放 | 生成九阶段真实状态；保存的新版 SVG 含 10 元素，读回位置与文字一致，保存后 undo 屏障已检查 |
+| 演示生成工具类型检查 | DemoBuilder 连同依赖源文件独立严格类型检查通过 |
 
-Git 开发过程分为方案与工程配置、领域模型、命令与 IO、测试与修正、最终文档与示例等提交。交付提交以 `final` 标签标记；远端地址为 https://github.com/MAK1MAAaa/se_lab01.git，可用 `git log --oneline`、`git show final` 和 `git ls-remote origin refs/heads/main refs/tags/final` 核对本地与远端。标签及推送完成状态以实际 Git 引用为准。
+Git 开发过程保留方案、领域、命令与 IO、测试、文档等五次原始提交，再分步增加本次修复、验收记录和可视化演示。原交付 `fa00319` 保存在 `phase1-before-review` 标签；`final` 用于本次交付的最后提交。远端为 [MAK1MAAaa/se_lab01](https://github.com/MAK1MAAaa/se_lab01)，可用 `git log --oneline`、`git show final`、`git ls-remote origin refs/heads/main refs/tags/final 'refs/tags/final^{}'` 核对远端 main 与 final 解引用后的提交。原任务未给截止时间，无法核验是否在截止前打标。
 
 未进行人工浏览器验收或覆盖率统计，不宣称覆盖率达标。自动化验证覆盖任务命令与明确的失败边界；本节所述 SVG 范围、坐标和样式限制仍然适用。
+
+视觉改进是附加展示，不属于 Phase 1 的必需功能。`opendesign/mockups/cli-showcase/` 展示预录命令状态，不作为图形编辑器前端；字体来自可读回的 SVG 根属性模板，箭头由三条 line 组成。生成工具仅依赖已有各层对象，运行时各层均不反向依赖该工具或展示页。

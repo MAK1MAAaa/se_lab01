@@ -1,0 +1,49 @@
+# 在项目根执行：npm run cli -- --script examples/flowchart-polished.commands
+# 仅使用 Phase 1 的六种图形与既定命令；字体设置来自可读回的 SVG 模板。
+# 创建流程图
+read examples/flowchart-template.svg
+create g flowchart
+create g node1 in flowchart
+create rect start 104 140 240 100 #edf3fc in node1
+set start stroke #4a90d9
+set start stroke-width 2
+create text start-label 224 198 "开始" in node1
+set start-label fill #244a83
+create g node2 in flowchart
+create rect process 616 140 240 100 #fff4de in node2
+set process stroke #f5a623
+set process stroke-width 2
+create text process-label 736 198 "处理数据" in node2
+set process-label fill #79530c
+create line arrow1 344 190 616 190 #414751 in flowchart
+set arrow1 stroke-width 2
+create line arrow-top 604 183 616 190 #414751 in flowchart
+set arrow-top stroke-width 2
+create line arrow-bottom 604 197 616 190 #414751 in flowchart
+set arrow-bottom stroke-width 2
+# 整体移动
+move node2 0 92
+show process
+show process-label
+# 撤销移动
+undo
+show process
+show process-label
+# 重做移动
+redo
+show process
+show process-label
+# 恢复对齐
+undo
+show process
+# 修改文字
+set process-label text "处理数据 v2"
+show process-label
+# 撤销文字
+undo
+show process-label
+# 重做文字
+redo
+show process-label
+# 保存 SVG
+save examples/flowchart-polished.svg

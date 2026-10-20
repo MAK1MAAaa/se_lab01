@@ -1,0 +1,271 @@
+{
+  "title": "SVG 编辑器 · CLI 命令回放",
+  "canvas": {
+    "width": 960,
+    "height": 420
+  },
+  "frames": [
+    {
+      "id": "create",
+      "title": "创建流程图",
+      "description": "读取字体与画布模板，用内置的 g、rect、text、line 逐项创建两个节点和连接线。",
+      "command": "read examples/flowchart-template.svg\ncreate g flowchart\ncreate g node1 in flowchart\ncreate rect start 104 140 240 100 #edf3fc in node1\nset start stroke #4a90d9\nset start stroke-width 2\ncreate text start-label 224 198 \"开始\" in node1\nset start-label fill #244a83\ncreate g node2 in flowchart\ncreate rect process 616 140 240 100 #fff4de in node2\nset process stroke #f5a623\nset process stroke-width 2\ncreate text process-label 736 198 \"处理数据\" in node2\nset process-label fill #79530c\ncreate line arrow1 344 190 616 190 #414751 in flowchart\nset arrow1 stroke-width 2\ncreate line arrow-top 604 183 616 190 #414751 in flowchart\nset arrow-top stroke-width 2\ncreate line arrow-bottom 604 197 616 190 #414751 in flowchart\nset arrow-bottom stroke-width 2",
+      "output": [
+        "read examples/flowchart-template.svg (0 elements)",
+        "g#flowchart created",
+        "g#node1 created in g#flowchart",
+        "rect#start created in g#node1",
+        "rect#start updated: stroke=\"#4a90d9\"",
+        "rect#start updated: stroke-width=\"2\"",
+        "text#start-label created in g#node1",
+        "text#start-label updated: fill=\"#244a83\"",
+        "g#node2 created in g#flowchart",
+        "rect#process created in g#node2",
+        "rect#process updated: stroke=\"#f5a623\"",
+        "rect#process updated: stroke-width=\"2\"",
+        "text#process-label created in g#node2",
+        "text#process-label updated: fill=\"#79530c\"",
+        "line#arrow1 created in g#flowchart",
+        "line#arrow1 updated: stroke-width=\"2\"",
+        "line#arrow-top created in g#flowchart",
+        "line#arrow-top updated: stroke-width=\"2\"",
+        "line#arrow-bottom created in g#flowchart",
+        "line#arrow-bottom updated: stroke-width=\"2\""
+      ],
+      "svg": "assets/01-create.svg",
+      "tree": [
+        "svg (960x420)",
+        "└── g#flowchart",
+        "    ├── g#node1",
+        "    │   ├── rect#start  x=104 y=140 w=240 h=100 fill=#edf3fc stroke=#4a90d9 stroke-width=2",
+        "    │   └── text#start-label  (224,198) \"开始\" fill=#244a83",
+        "    ├── g#node2",
+        "    │   ├── rect#process  x=616 y=140 w=240 h=100 fill=#fff4de stroke=#f5a623 stroke-width=2",
+        "    │   └── text#process-label  (736,198) \"处理数据\" fill=#79530c",
+        "    ├── line#arrow1  (344,190) -> (616,190) stroke=#414751 stroke-width=2",
+        "    ├── line#arrow-top  (604,183) -> (616,190) stroke=#414751 stroke-width=2",
+        "    └── line#arrow-bottom  (604,197) -> (616,190) stroke=#414751 stroke-width=2"
+      ]
+    },
+    {
+      "id": "move",
+      "title": "整体移动",
+      "description": "节点 2 下移 92 px，矩形与文字一起移动。连接线是独立图形，按任务语义保持原位。",
+      "command": "move node2 0 92\nshow process\nshow process-label",
+      "output": [
+        "g#node2 moved by (0,92)",
+        "rect#process  parent=g#node2",
+        "  x=616 y=232 width=240 height=100",
+        "  fill=#fff4de stroke=#f5a623 stroke-width=2",
+        "text#process-label  parent=g#node2",
+        "  x=736 y=290",
+        "  fill=#79530c",
+        "  text=\"处理数据\""
+      ],
+      "svg": "assets/02-move.svg",
+      "tree": [
+        "svg (960x420)",
+        "└── g#flowchart",
+        "    ├── g#node1",
+        "    │   ├── rect#start  x=104 y=140 w=240 h=100 fill=#edf3fc stroke=#4a90d9 stroke-width=2",
+        "    │   └── text#start-label  (224,198) \"开始\" fill=#244a83",
+        "    ├── g#node2",
+        "    │   ├── rect#process  x=616 y=232 w=240 h=100 fill=#fff4de stroke=#f5a623 stroke-width=2",
+        "    │   └── text#process-label  (736,290) \"处理数据\" fill=#79530c",
+        "    ├── line#arrow1  (344,190) -> (616,190) stroke=#414751 stroke-width=2",
+        "    ├── line#arrow-top  (604,183) -> (616,190) stroke=#414751 stroke-width=2",
+        "    └── line#arrow-bottom  (604,197) -> (616,190) stroke=#414751 stroke-width=2"
+      ]
+    },
+    {
+      "id": "undo-move",
+      "title": "撤销移动",
+      "description": "一次 undo 恢复整个节点，矩形回到 y=140，文字回到 y=198。",
+      "command": "undo\nshow process\nshow process-label",
+      "output": [
+        "g#node2 moved back by (0,-92)",
+        "rect#process  parent=g#node2",
+        "  x=616 y=140 width=240 height=100",
+        "  fill=#fff4de stroke=#f5a623 stroke-width=2",
+        "text#process-label  parent=g#node2",
+        "  x=736 y=198",
+        "  fill=#79530c",
+        "  text=\"处理数据\""
+      ],
+      "svg": "assets/03-undo-move.svg",
+      "tree": [
+        "svg (960x420)",
+        "└── g#flowchart",
+        "    ├── g#node1",
+        "    │   ├── rect#start  x=104 y=140 w=240 h=100 fill=#edf3fc stroke=#4a90d9 stroke-width=2",
+        "    │   └── text#start-label  (224,198) \"开始\" fill=#244a83",
+        "    ├── g#node2",
+        "    │   ├── rect#process  x=616 y=140 w=240 h=100 fill=#fff4de stroke=#f5a623 stroke-width=2",
+        "    │   └── text#process-label  (736,198) \"处理数据\" fill=#79530c",
+        "    ├── line#arrow1  (344,190) -> (616,190) stroke=#414751 stroke-width=2",
+        "    ├── line#arrow-top  (604,183) -> (616,190) stroke=#414751 stroke-width=2",
+        "    └── line#arrow-bottom  (604,197) -> (616,190) stroke=#414751 stroke-width=2"
+      ]
+    },
+    {
+      "id": "redo-move",
+      "title": "重做移动",
+      "description": "redo 恢复移动后的快照，矩形回到 y=232，文字回到 y=290。",
+      "command": "redo\nshow process\nshow process-label",
+      "output": [
+        "g#node2 moved by (0,92)",
+        "rect#process  parent=g#node2",
+        "  x=616 y=232 width=240 height=100",
+        "  fill=#fff4de stroke=#f5a623 stroke-width=2",
+        "text#process-label  parent=g#node2",
+        "  x=736 y=290",
+        "  fill=#79530c",
+        "  text=\"处理数据\""
+      ],
+      "svg": "assets/04-redo-move.svg",
+      "tree": [
+        "svg (960x420)",
+        "└── g#flowchart",
+        "    ├── g#node1",
+        "    │   ├── rect#start  x=104 y=140 w=240 h=100 fill=#edf3fc stroke=#4a90d9 stroke-width=2",
+        "    │   └── text#start-label  (224,198) \"开始\" fill=#244a83",
+        "    ├── g#node2",
+        "    │   ├── rect#process  x=616 y=232 w=240 h=100 fill=#fff4de stroke=#f5a623 stroke-width=2",
+        "    │   └── text#process-label  (736,290) \"处理数据\" fill=#79530c",
+        "    ├── line#arrow1  (344,190) -> (616,190) stroke=#414751 stroke-width=2",
+        "    ├── line#arrow-top  (604,183) -> (616,190) stroke=#414751 stroke-width=2",
+        "    └── line#arrow-bottom  (604,197) -> (616,190) stroke=#414751 stroke-width=2"
+      ]
+    },
+    {
+      "id": "restore",
+      "title": "恢复对齐",
+      "description": "再次撤销，让两个节点重新对齐。显示命令不会进入撤销栈。",
+      "command": "undo\nshow process",
+      "output": [
+        "g#node2 moved back by (0,-92)",
+        "rect#process  parent=g#node2",
+        "  x=616 y=140 width=240 height=100",
+        "  fill=#fff4de stroke=#f5a623 stroke-width=2"
+      ],
+      "svg": "assets/05-restore.svg",
+      "tree": [
+        "svg (960x420)",
+        "└── g#flowchart",
+        "    ├── g#node1",
+        "    │   ├── rect#start  x=104 y=140 w=240 h=100 fill=#edf3fc stroke=#4a90d9 stroke-width=2",
+        "    │   └── text#start-label  (224,198) \"开始\" fill=#244a83",
+        "    ├── g#node2",
+        "    │   ├── rect#process  x=616 y=140 w=240 h=100 fill=#fff4de stroke=#f5a623 stroke-width=2",
+        "    │   └── text#process-label  (736,198) \"处理数据\" fill=#79530c",
+        "    ├── line#arrow1  (344,190) -> (616,190) stroke=#414751 stroke-width=2",
+        "    ├── line#arrow-top  (604,183) -> (616,190) stroke=#414751 stroke-width=2",
+        "    └── line#arrow-bottom  (604,197) -> (616,190) stroke=#414751 stroke-width=2"
+      ]
+    },
+    {
+      "id": "edit-text",
+      "title": "修改文字",
+      "description": "通过 id 精确修改节点中的文字，完成一次新的可撤销编辑。",
+      "command": "set process-label text \"处理数据 v2\"\nshow process-label",
+      "output": [
+        "text#process-label updated: text=\"处理数据 v2\"",
+        "text#process-label  parent=g#node2",
+        "  x=736 y=198",
+        "  fill=#79530c",
+        "  text=\"处理数据 v2\""
+      ],
+      "svg": "assets/06-edit-text.svg",
+      "tree": [
+        "svg (960x420)",
+        "└── g#flowchart",
+        "    ├── g#node1",
+        "    │   ├── rect#start  x=104 y=140 w=240 h=100 fill=#edf3fc stroke=#4a90d9 stroke-width=2",
+        "    │   └── text#start-label  (224,198) \"开始\" fill=#244a83",
+        "    ├── g#node2",
+        "    │   ├── rect#process  x=616 y=140 w=240 h=100 fill=#fff4de stroke=#f5a623 stroke-width=2",
+        "    │   └── text#process-label  (736,198) \"处理数据 v2\" fill=#79530c",
+        "    ├── line#arrow1  (344,190) -> (616,190) stroke=#414751 stroke-width=2",
+        "    ├── line#arrow-top  (604,183) -> (616,190) stroke=#414751 stroke-width=2",
+        "    └── line#arrow-bottom  (604,197) -> (616,190) stroke=#414751 stroke-width=2"
+      ]
+    },
+    {
+      "id": "undo-text",
+      "title": "撤销文字",
+      "description": "恢复修改前的文本内容，图形和层级保持原有状态。",
+      "command": "undo\nshow process-label",
+      "output": [
+        "text#process-label updated: text=\"处理数据\"",
+        "text#process-label  parent=g#node2",
+        "  x=736 y=198",
+        "  fill=#79530c",
+        "  text=\"处理数据\""
+      ],
+      "svg": "assets/07-undo-text.svg",
+      "tree": [
+        "svg (960x420)",
+        "└── g#flowchart",
+        "    ├── g#node1",
+        "    │   ├── rect#start  x=104 y=140 w=240 h=100 fill=#edf3fc stroke=#4a90d9 stroke-width=2",
+        "    │   └── text#start-label  (224,198) \"开始\" fill=#244a83",
+        "    ├── g#node2",
+        "    │   ├── rect#process  x=616 y=140 w=240 h=100 fill=#fff4de stroke=#f5a623 stroke-width=2",
+        "    │   └── text#process-label  (736,198) \"处理数据\" fill=#79530c",
+        "    ├── line#arrow1  (344,190) -> (616,190) stroke=#414751 stroke-width=2",
+        "    ├── line#arrow-top  (604,183) -> (616,190) stroke=#414751 stroke-width=2",
+        "    └── line#arrow-bottom  (604,197) -> (616,190) stroke=#414751 stroke-width=2"
+      ]
+    },
+    {
+      "id": "redo-text",
+      "title": "重做文字",
+      "description": "恢复“处理数据 v2”，准备保存当前文档。",
+      "command": "redo\nshow process-label",
+      "output": [
+        "text#process-label updated: text=\"处理数据 v2\"",
+        "text#process-label  parent=g#node2",
+        "  x=736 y=198",
+        "  fill=#79530c",
+        "  text=\"处理数据 v2\""
+      ],
+      "svg": "assets/08-redo-text.svg",
+      "tree": [
+        "svg (960x420)",
+        "└── g#flowchart",
+        "    ├── g#node1",
+        "    │   ├── rect#start  x=104 y=140 w=240 h=100 fill=#edf3fc stroke=#4a90d9 stroke-width=2",
+        "    │   └── text#start-label  (224,198) \"开始\" fill=#244a83",
+        "    ├── g#node2",
+        "    │   ├── rect#process  x=616 y=140 w=240 h=100 fill=#fff4de stroke=#f5a623 stroke-width=2",
+        "    │   └── text#process-label  (736,198) \"处理数据 v2\" fill=#79530c",
+        "    ├── line#arrow1  (344,190) -> (616,190) stroke=#414751 stroke-width=2",
+        "    ├── line#arrow-top  (604,183) -> (616,190) stroke=#414751 stroke-width=2",
+        "    └── line#arrow-bottom  (604,197) -> (616,190) stroke=#414751 stroke-width=2"
+      ]
+    },
+    {
+      "id": "save",
+      "title": "保存 SVG",
+      "description": "保存为标准 SVG，并按任务要求设置撤销屏障。产物可以直接下载或在浏览器中打开。",
+      "command": "save examples/flowchart-polished.svg",
+      "output": [
+        "saved to examples/flowchart-polished.svg (10 elements)"
+      ],
+      "svg": "assets/09-save.svg",
+      "tree": [
+        "svg (960x420)",
+        "└── g#flowchart",
+        "    ├── g#node1",
+        "    │   ├── rect#start  x=104 y=140 w=240 h=100 fill=#edf3fc stroke=#4a90d9 stroke-width=2",
+        "    │   └── text#start-label  (224,198) \"开始\" fill=#244a83",
+        "    ├── g#node2",
+        "    │   ├── rect#process  x=616 y=140 w=240 h=100 fill=#fff4de stroke=#f5a623 stroke-width=2",
+        "    │   └── text#process-label  (736,198) \"处理数据 v2\" fill=#79530c",
+        "    ├── line#arrow1  (344,190) -> (616,190) stroke=#414751 stroke-width=2",
+        "    ├── line#arrow-top  (604,183) -> (616,190) stroke=#414751 stroke-width=2",
+        "    └── line#arrow-bottom  (604,197) -> (616,190) stroke=#414751 stroke-width=2"
+      ]
+    }
+  ]
+}
