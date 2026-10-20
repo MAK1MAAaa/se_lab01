@@ -95,7 +95,9 @@ export abstract class Shape {
   protected setChildParent(child: Shape, parent: Group | null): void { child.owner = parent; }
 
   private parseNumber(name: string, value: string): number {
-    if (value.trim().length === 0) throw new Error(`invalid number for ${name}: ${value}`);
+    if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(value)) {
+      throw new Error(`invalid number for ${name}: ${value}`);
+    }
     return this.validateNumber(name, Number(value));
   }
 

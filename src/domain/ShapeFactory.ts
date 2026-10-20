@@ -69,7 +69,8 @@ export class ShapeFactory {
   }
 
   private number(value: string | undefined, name: string): number {
-    if (value === undefined || value.trim().length === 0 || !Number.isFinite(Number(value))) {
+    if (value === undefined || !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(value)
+      || !Number.isFinite(Number(value))) {
       throw new Error(`invalid number for ${name}: ${String(value)}`);
     }
     return Number(value);

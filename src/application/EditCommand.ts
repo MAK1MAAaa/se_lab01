@@ -19,6 +19,7 @@ export abstract class EditCommand extends Command {
   }
 
   capture(before: SvgDocument, after: SvgDocument, result: EditResult): void {
+    if (this.before || this.after) throw new Error('edit command can only execute once; use redo');
     this.before = before.clone();
     this.after = after.clone();
     this.result = result;

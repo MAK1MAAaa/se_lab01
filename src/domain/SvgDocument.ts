@@ -38,6 +38,7 @@ export class SvgDocument {
     const destinationLength = parent === undefined ? this.roots.length : parent.children.length;
     this.validateIndex(index ?? destinationLength, destinationLength);
     const existing = new Set(this.preorder().map((element) => element.id));
+    if (this.rootAttributes.id !== undefined) existing.add(this.rootAttributes.id);
     for (const element of this.preorder([shape])) {
       if (existing.has(element.id)) throw new Error(`id already exists: ${element.id}`);
       existing.add(element.id);
@@ -55,7 +56,9 @@ export class SvgDocument {
   }
 
   group(newId: string, ids: readonly string[]): Group {
-    if (this.find(newId) !== undefined) throw new Error(`id already exists: ${newId}`);
+    if (this.find(newId) !== undefined || this.rootAttributes.id === newId) {
+      throw new Error(`id already exists: ${newId}`);
+    }
     if (ids.length === 0) throw new Error('group requires at least one shape');
     const selected = new Set<Shape>();
     for (const id of ids) {
