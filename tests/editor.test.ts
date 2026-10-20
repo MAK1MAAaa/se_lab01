@@ -433,3 +433,40 @@ test('the imported svg root id is reserved against create and group without chan
   await ok(runner, 'redo');
   assert.match(await ok(runner, 'show r'), /x=6\s+y=8/);
 });
+
+test('saving an imported document to a copy preserves its read path until another successful read', async () => {
+  const { editor, runner, repository } = fixture();
+  repository.files.set('original.svg', new SvgDocument(400, 300));
+  repository.files.set('another.svg', new SvgDocument(200, 100));
+  await commands(runner, ['read original.svg', 'save copy.svg', 'save']);
+  assert.deepEqual(repository.writes, ['copy.svg', 'original.svg']);
+  assert.equal(editor.currentPath, 'original.svg');
+
+  repository.rejectWrite = true;
+  await error(runner, 'save denied.svg', 'error: cannot write file: denied.svg');
+  assert.equal(editor.currentPath, 'original.svg');
+  assert.deepEqual(repository.writes, ['copy.svg', 'original.svg']);
+  repository.rejectWrite = false;
+
+  await commands(runner, ['read another.svg', 'save']);
+  assert.equal(editor.currentPath, 'another.svg');
+  assert.deepEqual(repository.writes, ['copy.svg', 'original.svg', 'another.svg']);
+  assert.equal(editor.document.width, 200);
+  assert.equal(editor.document.height, 100);
+});
+
+test('the first successful save of a new document establishes its default without later copies changing it', async () => {
+  const { editor, runner, repository } = fixture();
+  await ok(runner, 'init');
+  repository.rejectWrite = true;
+  await error(runner, 'save denied.svg', 'error: cannot write file: denied.svg');
+  assert.equal(editor.currentPath, undefined);
+  repository.rejectWrite = false;
+
+  await commands(runner, ['save first.svg', 'save copy.svg', 'save']);
+  assert.deepEqual(repository.writes, ['first.svg', 'copy.svg', 'first.svg']);
+  assert.equal(editor.currentPath, 'first.svg');
+  await ok(runner, 'init');
+  assert.equal(editor.currentPath, undefined);
+  await error(runner, 'save', /^error: .*file path/);
+});

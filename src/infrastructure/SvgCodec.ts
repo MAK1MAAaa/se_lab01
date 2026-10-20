@@ -69,7 +69,9 @@ export class SvgCodec {
     for (const shape of document.children) {
       root.appendChild(this.writeShape(xml, shape));
     }
-    return `<?xml version="1.0" encoding="UTF-8"?>\n${new XMLSerializer().serializeToString(xml)}\n`;
+    // XML parsing normalizes literal CR/CRLF; references preserve the actual text characters.
+    const serialized = new XMLSerializer().serializeToString(xml).replace(/\r/g, '&#13;');
+    return `<?xml version="1.0" encoding="UTF-8"?>\n${serialized}\n`;
   }
 
   private collectExplicitIds(element: XmlElement, usedIds: Set<string>): void {

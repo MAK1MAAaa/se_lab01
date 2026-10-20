@@ -38,7 +38,8 @@ export class Editor {
     const destination = path ?? this.filePath;
     if (!destination) throw new Error('no file path. use save <file.svg>');
     await this.repository.write(destination, document);
-    this.filePath = destination;
+    // Saving a copy must preserve the path established by read or the first save.
+    this.filePath ??= destination;
     this.history.barrier();
     return [`saved to ${destination} (${document.elementCount} elements)`];
   }

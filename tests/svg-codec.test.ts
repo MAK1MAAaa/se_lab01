@@ -62,6 +62,24 @@ test('XML text and attribute escaping preserve Unicode and special characters', 
   assert.match(output, /&lt;/);
 });
 
+test('character-reference CR and CRLF text survive XML newline normalization on round trip', () => {
+  const first = codec.decode(svg(
+    '<text id="cr" data-value="a&#13;&#10;&#9;b">a&#13;b</text>'
+    + '<text id="crlf">a&#13;&#10;b</text>',
+  )).document;
+  assert.equal(first.requireShape('cr').textContent, 'a\rb');
+  assert.equal(first.requireShape('crlf').textContent, 'a\r\nb');
+  assert.equal(first.requireShape('cr').attributes['data-value'], 'a\r\n\tb');
+
+  const output = codec.encode(first);
+  const second = codec.decode(output).document;
+  assert.equal(second.requireShape('cr').textContent, 'a\rb');
+  assert.equal(second.requireShape('crlf').textContent, 'a\r\nb');
+  assert.equal(second.requireShape('cr').attributes['data-value'], 'a\r\n\tb');
+  assert.doesNotMatch(output, /\r/);
+  assert.match(output, /data-value="a&#13;&#10;&#9;b"/);
+});
+
 test('dimensions default or follow viewBox without discarding its origin', () => {
   const defaults = codec.decode(svg('')).document;
   assert.equal(defaults.width, 800);
