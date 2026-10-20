@@ -38,4 +38,4 @@
 
 ## 范围与限制
 
-box/插件、完整 SVG/CSS、世界坐标补偿不属于本阶段；现有 transform 和父级继承样式重挂后可能改变视觉效果，详见架构文档。未做人工浏览器验收、覆盖率统计或截止合规认定。OpenDesign 蓝橙流程图与命令回放页属于附加展示，不替换 CLI，不影响本表 Phase 1 必需功能结论。九个状态均由原有命令生成，新版脚本可直接用 `npm run cli -- --script examples/flowchart-polished.commands` 复现。
+box/插件、完整 SVG/CSS、世界坐标补偿不属于本阶段；现有 transform 和父级继承样式重挂后可能改变视觉效果，详见架构文档。未做人工签字验收、覆盖率统计或截止合规认定。OpenDesign 蓝橙流程图与命令回放页属于附加展示，不替换 CLI，不影响本表 Phase 1 必需功能结论。九个状态均由原有命令生成，并经独立代理浏览器检查播放、暂停、跳转、重置、树展示和末帧停止；新版脚本可直接用 `npm run cli -- --script examples/flowchart-polished.commands` 复现。
